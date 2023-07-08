@@ -1,0 +1,82 @@
+@import "vars";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  h1 {
+    @apply text-2xl;
+  }
+  h2 {
+    @apply text-xl;
+  }
+  h3 {
+    @apply text-lg;
+  }
+  h4 {
+    @apply text-sm;
+  }
+}
+
+html {
+  font-size: 16px;
+}
+* {
+  margin: 0;
+  padding: 0;
+
+  box-sizing: border-box;
+}
+body {
+  font-family: BlinkMacSystemFont, -apple-system, Segoe UI, Roboto, Helvetica,
+    Arial, sans-serif;
+  color: #3c3c3c;
+  background-color: #e8e8e8;
+}
+
+.forumtitle {
+  font-weight: 600;
+  font-family: "Open Sans", Arial, Helvetica, sans-serif;
+}
+.lastsubject {
+  font-weight: 600;
+  font-family: "Open Sans", Arial, Helvetica, sans-serif;
+}
+
+.grid-container {
+  display: grid;
+  max-width: 100%;
+  grid-template-columns: 3fr 1fr;
+  gap: 20px;
+  grid-template-areas: "main aside ";
+}
+
+.main {
+  grid-area: main;
+}
+.aside {
+  grid-area: aside;
+}
+.clip {
+  display: block;
+  white-space: nowrap; /* Запрещаем перенос строк */
+  overflow: hidden; /* Обрезаем все, что не помещается в область */
+  text-overflow: ellipsis; /* Добавляем многоточие */
+}
+
+.slide-enter-active,
+.slide-leave-active {
+  transition: opacity 0.7s ease-in-out;
+}
+
+.slide-enter-from,
+.slide-leave-to {
+  opacity: 0;
+}
+
+.slide-enter-to,
+.slide-leave-from {
+  opacity: 1;
+}
+@import "media";
