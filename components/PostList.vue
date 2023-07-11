@@ -9,7 +9,7 @@
           <span class="post-date">{{
             new Date(post.created_at).toLocaleString()
           }}</span>
-          <span class="node-controls">#</span>
+          <span class="node-controls">#{{ index + 1 }}</span>
         </div>
         <div class="post-details">
           <div class="user-info bg-[#F2F6F8] pt-[2px] px-[10px] pb-[5px]">
@@ -68,23 +68,52 @@
             </div>
           </div>
         </div>
-        <div class="post-foot bg-[#c1c1c1]">
+        <div
+          class="post-foot bg-[#c1c1c1]"
+          v-if="post.user_id !== auth.user.id"
+        >
           <div
-            class="control-answer flex justify-between px-2 items-center text-[.8em] py-[4px]"
+            class="control-answer mb-4 flex justify-between px-2 items-center text-[.8em] py-[4px]"
           >
-            <div class="thanks px-2 text-[.9em] font-medium">
-              <a href="#" class="hover:text-[#3c699c]">
+            <div
+              class="thanks px-2 text-[.9em] font-medium"
+              v-if="!check(post.likes)"
+            >
+              <button
+                @click="addlike(post, index)"
+                class="hover:text-[#3c699c]"
+              >
                 <font-awesome-icon :icon="['fas', 'thumbs-up']" />
                 <span class="ml-1">Спасибо</span>
-              </a>
+              </button>
             </div>
             <div
-              @click="openModal"
+              @click="handlePost(post)"
               class="reply cursor-pointer text-[#3C3C3C] flex flex-row-reverse gap-2 font-medium items-center"
             >
               <span>Ответить c цитированием</span>
               <font-awesome-icon :icon="['fas', 'quote-left']" />
             </div>
+          </div>
+        </div>
+        <div
+          v-if="post.likes.length"
+          class="post-likes bg-[#e1e1e1]/[.3] px-[10px] py-[10px] mt-3"
+        >
+          <div class="thx-said">
+            <h4 class="text-[.8em] font-bold border-b-[1px] border-[#C8C8C8]">
+              Спасибо сказали:
+            </h4>
+          </div>
+          <div
+            class="users-like text-[.8em] mt-2 inline-block mr-2"
+            v-for="(like, index) in post.likes"
+            :key="like.id"
+          >
+            <span class="text-blue mr-1">{{ like.user.name }}</span>
+            <span class="text-black"
+              >({{ new Date(like.created_at).toLocaleDateString() }}),</span
+            >
           </div>
         </div>
       </li>
@@ -94,6 +123,10 @@
 
 <script setup>
 const { posts } = defineProps(["posts"]);
+const post = ref("");
+const likes = ref([]);
+const auth = useAuthStore();
+const isLiked = ref(false);
 import ModalCreateQuotePost from "@/components/ModalCreateQuotePost.vue";
 import { ModalsContainer, useModal } from "vue-final-modal";
 const { open: openModal, close: closeModal } = useModal({
@@ -103,11 +136,40 @@ const { open: openModal, close: closeModal } = useModal({
     onConfirm() {
       closeModal();
     },
+    post: post,
   },
   slots: {
     default: "<p>UseModal: The content of the modal</p>",
   },
 });
+const addlike = async (post, index) => {
+  await $fetch("http://localhost:8000/api/post/like", {
+    method: "POST",
+    body: {
+      post_id: post.id,
+      user_id: auth.user.id,
+    },
+  }).then((res) => {
+    posts[index].likes.push(res);
+    console.log(res);
+  });
+};
+
+const check = (data) => {
+  const equal = (element) => element.user_id === auth.user.id;
+  let x = data.some(equal);
+  return x;
+};
+
+const handlePost = (data) => {
+  if (auth.user.id == data.user.id) {
+    return;
+  }
+  post.value = data;
+  openModal();
+};
+
+onMounted(() => {});
 </script>
 
 <style lang="scss" scoped>

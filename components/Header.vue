@@ -335,6 +335,12 @@ function closeModal() {
   }
 }
 const auth = useAuthStore();
+
+if (!auth.isLoggedIn) {
+  await auth.fetchUser();
+}
+console.log(auth.isLoggedIn);
+
 onMounted(() => {});
 </script>
 

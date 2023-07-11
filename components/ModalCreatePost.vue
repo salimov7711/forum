@@ -14,7 +14,7 @@
     <h1 class="text-xl">
       {{ title }}
     </h1>
-    <form @submit.prevent="">
+    <form @submit.prevent="handleSubmit">
       <label for="title-text" class="text-[0.9em] font-semibold block w-[80vw]">
         Заглавие</label
       >
@@ -54,43 +54,38 @@
 </template>
 
 <script setup lang="js">
-
+const auth = useAuthStore();
+import { storeToRefs } from "pinia";
+const {user} = storeToRefs(auth);
 const formData = ref({
   title: "",
   content: "",
+	user_id: user.value.id,
+	topic_id: topic.id,
+	post_id:null
 });
+
 // const {isLoggedIn} = useAuth();
 // if(!isLoggedIn()) {
 // 	navigateTo('/login')
 // }
 
  import { VueFinalModal } from "vue-final-modal";
- const {title} = defineProps(['title'])
+ const {title, topic} = defineProps(['title' ,'topic'])
  const emit = defineEmits(['confirm']);
-// 		const {user} =useAuthStore();
-// const createAnswer = async ()=> {
-// 	await use$fetch("post", {
-//     method: "post",
-//     body: JSON.stringify({
-//       title: formData.value.title,
-//       content: formData.value.content,
-//       topic_id: topic.data[0].topic_id,
-// 			user_id: user.id
-//     }),
 
-//   }).then((res) => {
-// 		 emit('confirm');
-//     console.log(res);
-// 		window.location.reload();
+ const handleSubmit = async () => {
+	const {data ,error} = await useApiFetch('/api/post',{
+		method: 'POST',
+		body:formData.value
+	})
+	if(!!data.value) {
+		emit('confirm')
+		window.location.reload();
+	}
+ }
 
-//   });
-// }
-// console.log(topic);
-// const handleSubmit = async () => {
-// console.log(formData.value, topic.id,user.id)
-// await createAnswer();
-
-// }
+ console.log(user);
 </script>
 
 <style lang="scss" scoped></style>

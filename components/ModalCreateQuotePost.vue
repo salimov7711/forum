@@ -12,12 +12,13 @@
     }"
   >
     <h1 class="text-xl">{{ title }}</h1>
-    <form @submit.prevent="">
+    <form @submit.prevent="createAnswer">
       <label for="title-text" class="text-[0.9em] font-semibold block w-[80vw]">
         Заглавие</label
       >
 
       <input
+        required
         v-model="formData.title"
         id="title-text"
         type="text"
@@ -52,10 +53,15 @@
 </template>
 
 <script setup lang="js">
-
+const auth = useAuthStore();
+import { storeToRefs } from "pinia";
+const {user} = storeToRefs(auth);
 const formData = ref({
   title: "",
   content: "",
+ 	user_id: user.value.id,
+	post_id: post.id,
+	topic_id: post.topic_id
 });
 // const {isLoggedIn} = useAuth();
 // if(!isLoggedIn()) {
@@ -63,32 +69,21 @@ const formData = ref({
 // }
 
  import { VueFinalModal } from "vue-final-modal";
- const {title} = defineProps(['title'])
+ const {title ,post} = defineProps(['title','post'])
  const emit = defineEmits(['confirm']);
-// 		const {user} =useAuthStore();
-// const createAnswer = async ()=> {
-// 	await use$fetch("post", {
-//     method: "post",
-//     body: JSON.stringify({
-//       title: formData.value.title,
-//       content: formData.value.content,
-//       topic_id: topic.data[0].topic_id,
-// 			user_id: user.id
-//     }),
 
-//   }).then((res) => {
-// 		 emit('confirm');
-//     console.log(res);
-// 		window.location.reload();
+const createAnswer = async () => {
+	const{ data:res, error} = await useApiFetch("/api/post", {
+    method: "post",
+    body:formData.value,
+	})
+	if (res.value.status) {
+		emit('confirm');
+		window.location.reload();
+	};
 
-//   });
-// }
-// console.log(topic);
-// const handleSubmit = async () => {
-// console.log(formData.value, topic.id,user.id)
-// await createAnswer();
-
-// }
+}
+console.log(post.id);
 </script>
 
 <style lang="scss" scoped></style>

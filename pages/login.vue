@@ -69,7 +69,7 @@ const auth = useAuthStore();
 
 async function handleLogin() {
   const { error } = await auth.login(form.value);
-  console.log(error);
+  if (!error.value) navigateTo("/");
 }
 </script>
 

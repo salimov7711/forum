@@ -17,7 +17,7 @@
 
 <script setup>
 const { groups } = defineProps(["groups"]);
-console.log(groups);
+
 </script>
 
 <style lang="scss" scoped></style>

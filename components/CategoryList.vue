@@ -31,7 +31,7 @@
                 ></div>
 
                 <NuxtLink
-                  :to="`/${group}/${category.url}`"
+                  :to="`/${group}/${category.url}?page=1`"
                   class="forumtitle"
                   >{{ category.title }}</NuxtLink
                 ><br />{{ category.desc }}

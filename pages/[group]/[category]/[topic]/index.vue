@@ -3,7 +3,6 @@
     <Breadcrumbs />
     <div class="subhead flex justify-between">
       <MyButton @click="open">Ответить в теме</MyButton>
-     
     </div>
 
     <div class="post-list-wrapper bg-white px-[20px] py-[20px] mb-4">
@@ -25,7 +24,10 @@
 <script setup>
 const route = useRoute().params;
 
-const { data, pending, error } = await useApiFetch(`/api/topic/${route.topic}`);
+const { data, pending, error } = await useApiFetch(
+  `/api/topic/${route.topic}`,
+  {}
+);
 
 import { useModal } from "vue-final-modal";
 import ModalCreatePost from "@/components/ModalCreatePost";
@@ -38,6 +40,7 @@ const { open, close } = useModal({
     },
 
     title: "Ответить в теме!",
+    topic: data.value.topic,
   },
   slots: {
     default: "<p>UseModal: The content of the modal</p>",

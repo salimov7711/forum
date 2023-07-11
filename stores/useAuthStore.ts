@@ -15,7 +15,7 @@ type RegistrationInfo = {
   password: "string";
   password_confirmation: "string";
 };
-export const useAuthStore = defineStore("auth", () => {
+export const useAuthStore = defineStore("authStore", () => {
   const user = ref<User | null>(null);
   const isLoggedIn = computed(() => !!user.value);
 
@@ -29,8 +29,9 @@ export const useAuthStore = defineStore("auth", () => {
   /* Fetch User */
   async function fetchUser() {
     const { data, error } = await useApiFetch("/api/user");
-    console.log(error);
+
     user.value = data.value as User;
+    console.log(error);
   }
 
   /* Login method */
@@ -38,7 +39,7 @@ export const useAuthStore = defineStore("auth", () => {
     await useApiFetch("/sanctum/csrf-cookie");
 
     const login = await useApiFetch("/login", {
-      method: "post",
+      method: "POST",
       body: credentials,
     });
     await fetchUser();
@@ -54,9 +55,7 @@ export const useAuthStore = defineStore("auth", () => {
       method: "post",
       body: info,
     });
-
     await fetchUser();
-
     return register;
   }
 
