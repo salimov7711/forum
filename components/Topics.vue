@@ -19,7 +19,10 @@
       v-for="(topic, index) in topics"
       :key="topic.id"
     >
-      <li class="row bg-[#fafafa] list-none text-[#6c6c6c]">
+      <li
+        class="row bg-[#f4f2f2] list-none text-[#6c6c6c]"
+        :style="index % 2 === 0 ? { background: '#f0f0f0' } : ''"
+      >
         <dl class="flex justify-between py-[18px]">
           <dt>
             <div class="list-inner relative ml-[50px]">
@@ -105,11 +108,10 @@ a {
   }
 }
 .topic-list-forum {
+  transition: background-color 0.3s ease;
+
   .row {
     transition: background-color 0.3s ease;
-    &:hover {
-      background-color: lighten($color: #000000, $amount: 96%);
-    }
   }
 }
 .list-icon {

@@ -13,11 +13,11 @@ export default defineNuxtConfig({
       //     crossorigin: "anonymous",
       //   },
       // ],
-      // script: [
-      //   {
-      //     src: "https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js",
-      //   },
-      // ],
+      script: [
+        // {
+        //   src: "https://js.pusher.com/8.2.0/pusher.min.js",
+        // },
+      ],
     },
   },
 
@@ -25,6 +25,8 @@ export default defineNuxtConfig({
     "~/assets/scss/main.scss",
     "@fortawesome/fontawesome-svg-core/styles.css",
     "vue-final-modal/style.css",
+    // "notivue/notifications.css",
+    "notivue/animations.css",
   ],
   modules: ["@pinia/nuxt", "@nuxt/image-edge"],
   pinia: {
@@ -47,10 +49,10 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      BASE_URL: "http://localhost:8000",
+      BASE_URL: "http://192.168.0.109:8000",
     },
   },
-
+ssr: false,
   build: {
     transpile: [
       "@fortawesome/vue-fontawesome",

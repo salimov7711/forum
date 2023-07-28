@@ -11,7 +11,7 @@
       >
         <form @submit.prevent="handleLogin" class="w-full mx-auto">
           <div class="mb-[1.8em] sm:w-[50%] mx-auto">
-            <label for="email" class="block mb-1">Электронная почта</label>
+            <label class="block mb-1">Электронная почта</label>
             <input
               v-model="form.email"
               type="email"
@@ -21,7 +21,7 @@
             />
           </div>
           <div class="mb-[1.8em] sm:w-[50%] mx-auto">
-            <label for="password" class="block mb-1">Пароль:</label>
+            <label class="block mb-1">Пароль:</label>
             <input
               v-model="form.password"
               type="password"
@@ -68,8 +68,8 @@ const form = ref({
 const auth = useAuthStore();
 
 async function handleLogin() {
-  const { error } = await auth.login(form.value);
-  if (!error.value) navigateTo("/");
+  const { data, error } = await auth.login(form.value);
+  //  if (!error.value) navigateTo("/");
 }
 </script>
 

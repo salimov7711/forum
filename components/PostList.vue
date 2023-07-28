@@ -1,5 +1,6 @@
 <template>
   <!-- Topic Posts -->
+
   <div class="post-list" v-for="(post, index) in posts" :key="post.id">
     <ol class="posts mb-5">
       <li class="post-container">
@@ -12,16 +13,64 @@
           <span class="node-controls">#{{ index + 1 }}</span>
         </div>
         <div class="post-details">
-          <div class="user-info bg-[#F2F6F8] pt-[2px] px-[10px] pb-[5px]">
-            <div class="username-container text-[.9em] font-bold text-blue">
-              <a href="#">{{ post.user.name }}</a>
+          <div
+            class="user-info relative bg-[#F2F6F8] pt-[2px] px-[10px] pb-[5px]"
+          >
+            <div
+              class="username-container relative text-[.9em] font-bold text-blue hover:text-black"
+            >
+              <a href="#" class="user_link">{{ post.user.name }}</a>
+              <div
+                class="dropdown-user text-[#3c3c3c] hidden text-[.8em] absolute w-[200px] bg-[#e8e8e8]"
+              >
+                <ul class="dropdown-contents py-[10px]">
+                  <li class="user-profile hover:bg-[#F5F5F5] leading-[1.5px]">
+                    <nuxt-link
+                      :to="`/profile?id=${post.user.id}`"
+                      class="py-[7.5px] pl-[20px] pr-[30px] inline-block w-full"
+                      role="menuitem"
+                    >
+                      <font-awesome-icon
+                        icon="fa-solid fa-user"
+                        class="mr-[7.5px]"
+                      />
+                      Профиль</nuxt-link
+                    >
+                  </li>
+                  <li class="user-profile hover:bg-[#F5F5F5] leading-[1.5px]">
+                    <nuxt-link
+                      :to="`/messages?id=${post.user.id}`"
+                      class="py-[7.5px] pl-[20px] pr-[30px] inline-block w-full"
+                      role="menuitem"
+                    >
+                      <font-awesome-icon :icon="['far', 'envelope']" />
+                      <span class="ml-2">Написать сообщение</span>
+                    </nuxt-link>
+                  </li>
+                </ul>
+              </div>
             </div>
-            <div class="user-role text-[0.8em] mb-1">Admin</div>
-            <div class="user-role text-[0.8em] mb-1">User</div>
-            <div class="user-avatar">
+            <!-- Dropdow user -->
+
+            <div
+              v-if="post.user.user_role_id == 1"
+              class="user-role text-[0.8em] mb-1 text-red-500"
+            >
+              Admin
+            </div>
+            <div
+              v-else-if="post.user.user_role_id == 2"
+              class="user-role text-[0.8em] mb-1 text-yellow-500"
+            >
+              Moderator
+            </div>
+            <div v-else class="user-role text-[0.8em] mb-1">User</div>
+            <div
+              class="user-avatar h-[80px] w-[100px] shrink-0 inline-flex items-center justify-center overflow-hidden"
+            >
               <img
-                class="max-w-[90px]"
-                src="/img/default.png"
+                class="h-full w-full object-cover"
+                :src="`${config.public.BASE_URL}/api/get/image?name=${post.user.icon}`"
                 alt="image"
                 format="webp"
                 sizes="sm:500px md:700px"
@@ -69,31 +118,29 @@
           </div>
         </div>
         <div
-          class="post-foot bg-[#c1c1c1]"
-          v-if="post.user_id !== auth.user.id"
+          class="post-foot h-[25px] bg-[#c1c1c1] relative control-answer mb-4 px-2 text-[.8em] py-[4px]"
         >
           <div
-            class="control-answer mb-4 flex justify-between px-2 items-center text-[.8em] py-[4px]"
+            v-if="!isLiked(post)"
+            class="thanks-button px-2 text-[.9em] font-medium"
           >
-            <div
-              class="thanks px-2 text-[.9em] font-medium"
-              v-if="!check(post.likes)"
-            >
-              <button
-                @click="addlike(post, index)"
-                class="hover:text-[#3c699c]"
-              >
-                <font-awesome-icon :icon="['fas', 'thumbs-up']" />
-                <span class="ml-1">Спасибо</span>
-              </button>
-            </div>
-            <div
-              @click="handlePost(post)"
-              class="reply cursor-pointer text-[#3C3C3C] flex flex-row-reverse gap-2 font-medium items-center"
-            >
-              <span>Ответить c цитированием</span>
-              <font-awesome-icon :icon="['fas', 'quote-left']" />
-            </div>
+            <button @click="addlike(post, index)" class="hover:text-[#3c699c]">
+              <font-awesome-icon :icon="['fas', 'thumbs-up']" />
+              <span class="ml-1">Спасибо</span>
+            </button>
+          </div>
+
+          <div
+            class="reply cursor-pointer text-[#3C3C3C] absolute right-[5px] top-1 flex gap-2 font-medium items-center"
+          >
+            <font-awesome-icon
+              :icon="['fas', 'quote-left']"
+              class="invisible md:visible"
+            />
+
+            <button @click="handlePost(post)">
+              <span>Цитировать</span>
+            </button>
           </div>
         </div>
         <div
@@ -120,13 +167,18 @@
     </ol>
   </div>
 </template>
-
+<!-- v-if="!check(post.likes)" -->
+<!-- v-if="post.user_id !== auth.user.id" -->
 <script setup>
+const config = useRuntimeConfig();
 const { posts } = defineProps(["posts"]);
+const emit = defineEmits(["refresh"]);
 const post = ref("");
 const likes = ref([]);
 const auth = useAuthStore();
-const isLiked = ref(false);
+import { storeToRefs } from "pinia";
+const { user } = storeToRefs(auth);
+
 import ModalCreateQuotePost from "@/components/ModalCreateQuotePost.vue";
 import { ModalsContainer, useModal } from "vue-final-modal";
 const { open: openModal, close: closeModal } = useModal({
@@ -135,6 +187,7 @@ const { open: openModal, close: closeModal } = useModal({
     title: "Ответить с цитированием!",
     onConfirm() {
       closeModal();
+      emit("refresh");
     },
     post: post,
   },
@@ -142,12 +195,18 @@ const { open: openModal, close: closeModal } = useModal({
     default: "<p>UseModal: The content of the modal</p>",
   },
 });
+
+const date = new Date();
 const addlike = async (post, index) => {
-  await $fetch("http://localhost:8000/api/post/like", {
+  if (!auth.isLoggedIn) {
+    navigateTo("/login");
+    return;
+  }
+  await use$fetch("/api/post/like", {
     method: "POST",
     body: {
       post_id: post.id,
-      user_id: auth.user.id,
+      user_id: user.value.id,
     },
   }).then((res) => {
     posts[index].likes.push(res);
@@ -155,14 +214,17 @@ const addlike = async (post, index) => {
   });
 };
 
-const check = (data) => {
-  const equal = (element) => element.user_id === auth.user.id;
-  let x = data.some(equal);
-  return x;
+const isLiked = (post) => {
+  return post.likes.some((item) => {
+    return item.user_id !== user.id;
+  });
 };
 
 const handlePost = (data) => {
-  if (auth.user.id == data.user.id) {
+  if (!auth.isLoggedIn) {
+    navigateTo("/login");
+    return;
+  } else if (data.user.id === auth.user.id) {
     return;
   }
   post.value = data;
@@ -204,6 +266,13 @@ onMounted(() => {});
     height: 13px;
     left: -10px;
     position: absolute;
+  }
+}
+.username-container {
+  &:hover {
+    .dropdown-user {
+      display: block;
+    }
   }
 }
 </style>

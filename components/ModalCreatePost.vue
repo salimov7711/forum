@@ -55,6 +55,10 @@
 
 <script setup lang="js">
 const auth = useAuthStore();
+
+if(!auth.isLoggedIn) {
+	navigateTo('/login');
+}
 import { storeToRefs } from "pinia";
 const {user} = storeToRefs(auth);
 const formData = ref({
@@ -75,17 +79,16 @@ const formData = ref({
  const emit = defineEmits(['confirm']);
 
  const handleSubmit = async () => {
-	const {data ,error} = await useApiFetch('/api/post',{
+	const {data ,error} = await useApiFetch('/api/post/create',{
 		method: 'POST',
 		body:formData.value
 	})
 	if(!!data.value) {
+
 		emit('confirm')
-		window.location.reload();
+
 	}
  }
-
- console.log(user);
 </script>
 
 <style lang="scss" scoped></style>

@@ -177,6 +177,7 @@
             :size="sizeSpinner"
           ></clip-loader> -->
           <!-- user button -->
+
           <div class="flex">
             <li
               v-if="auth.isLoggedIn"
@@ -191,7 +192,7 @@
                 <ul class="dropdown-contents py-[10px]">
                   <li class="user-profile hover:bg-[#F5F5F5] leading-[1.5px]">
                     <nuxt-link
-                      to="/profile"
+                      :to="`/profile?id=${auth.user.id}`"
                       class="py-[7.5px] pl-[20px] pr-[30px] inline-block w-full"
                       role="menuitem"
                     >
@@ -199,21 +200,23 @@
                         icon="fa-solid fa-user"
                         class="mr-[7.5px]"
                       />
-                      Профиль</nuxt-link
+                      Кабинет</nuxt-link
                     >
                   </li>
-                  <li class="messages hover:bg-[#F5F5F5] leading-[1.5px]">
-                    <a
-                      href="#"
+                  <li class="user-profile hover:bg-[#F5F5F5] leading-[1.5px]">
+                    <nuxt-link
+                      to="/messages"
                       class="py-[7.5px] pl-[20px] pr-[30px] inline-block w-full"
+                      role="menuitem"
                     >
                       <font-awesome-icon
-                        icon="fa-regular fa-envelope"
+                        :icon="['far', 'envelope']"
                         class="mr-[7.5px]"
                       />
-                      Личные сообщения</a
+                      Сообщения</nuxt-link
                     >
                   </li>
+
                   <li
                     class="exit hover:bg-[#F5F5F5] leading-[1.5px]"
                     @click="auth.logout"
@@ -246,6 +249,7 @@
           </div>
         </ul>
       </div>
+
       <div class="bottom-nav bg-[#f5f5f5] text-[15px]" role="banner">
         <div
           class="nav-wrapper px-[30px] flex justify-between border-b-2 border-black/[.1]"
@@ -308,38 +312,73 @@
               </fieldset>
             </form>
           </div>
+          <ClientOnly
+            ><Notivue v-slot="item">
+              <MyNotification :item="item as NotivueSlot<CustomProps>" />
+            </Notivue>
+          </ClientOnly>
         </div>
       </div>
     </header>
   </div>
 </template>
 
-<script setup>
-// import ClipLoader from "vue-spinner/src/ClipLoader";
-// const sizeSpinner = ref("15px");
-
-// const loading = ref(true);
-
+<script setup lang="ts">
+import { storeToRefs } from "pinia";
+const auth = useAuthStore();
+const { isLoggedIn } = storeToRefs(auth);
+import { usePush } from "notivue";
+import { Notivue, type NotivueSlot } from "notivue";
+import MyNotification, {
+  type CustomProps,
+} from "@/components/MyNotification.vue";
+const push = usePush();
+import Pusher from "pusher-js";
+import { log } from "console";
 const desctopBurger = ref(false);
 
 const mobileBurger = ref(false);
 
-// const { isLoggedIn } = useAuth();
-
-// const userStore = useAuthStore();
-// const userStore = useAuthStore();
 function closeModal() {
   if (desctopBurger) {
     desctopBurger.value = false;
     mobileBurger.value = false;
   }
 }
-const auth = useAuthStore();
 
-if (!auth.isLoggedIn) {
-  await auth.fetchUser();
-}
-console.log(auth.isLoggedIn);
+const userStore = UsersOnlineStore();
+const pusher = new Pusher("08ef1eaceb678d0ebc8f", {
+  cluster: "mt1",
+});
+
+const channel2 = pusher.subscribe(`online_users`);
+channel2.bind("showUserStatus.event", (data) => {
+  userStore.addUser(data);
+});
+Pusher.logToConsole = true;
+
+const config = useRuntimeConfig();
+
+watch(isLoggedIn, (value) => {
+  if (value) {
+    const channel = pusher.subscribe(`channel_message_${auth.user.id}`);
+    channel.bind("message.event", (data) => {
+      console.log(data.user.icon);
+      push.success<CustomProps>({
+        title: "У вас новое сообщение",
+        message: "This is a custom notification",
+
+        props: {
+          avatarUrl: `${config.public.BASE_URL}/api/get/image?name=${data.user.icon}`,
+          postUrl: "https://social.com/my-post",
+          routeData: data.topic,
+        },
+      });
+    });
+  }
+
+  console.log("isLoggedIn ref changed, do something!" + value);
+});
 
 onMounted(() => {});
 </script>

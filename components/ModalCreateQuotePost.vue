@@ -53,7 +53,11 @@
 </template>
 
 <script setup lang="js">
+
+
 const auth = useAuthStore();
+
+
 import { storeToRefs } from "pinia";
 const {user} = storeToRefs(auth);
 const formData = ref({
@@ -73,17 +77,17 @@ const formData = ref({
  const emit = defineEmits(['confirm']);
 
 const createAnswer = async () => {
-	const{ data:res, error} = await useApiFetch("/api/post", {
+	const{ data:res, error} = await useApiFetch("/api/post/create", {
     method: "post",
     body:formData.value,
 	})
 	if (res.value.status) {
 		emit('confirm');
-		window.location.reload();
+		
 	};
 
 }
-console.log(post.id);
+console.log(post.user.id);
 </script>
 
 <style lang="scss" scoped></style>

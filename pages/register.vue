@@ -12,7 +12,7 @@
         <form @submit.prevent="handleRegister" class="w-full mx-auto">
           <!-- Name Input box -->
           <div class="mb-[1.2em] sm:w-[50%] mx-auto">
-            <label for="name" class="block mb-1">Имя пользователя:</label>
+            <label class="block mb-1">Имя пользователя:</label>
             <input
               v-model="form.name"
               type="text"
@@ -25,7 +25,7 @@
 
           <!-- Email input box -->
           <div class="mb-[1.2em] sm:w-[50%] mx-auto">
-            <label for="email" class="block mb-1">Электронная почта:</label>
+            <label class="block mb-1">Электронная почта:</label>
             <input
               v-model="form.email"
               type="email"
@@ -40,7 +40,7 @@
 
           <!-- address input box -->
           <div class="mb-[1.2em] sm:w-[50%] mx-auto">
-            <label for="address" class="block mb-1">Адрес проживания</label>
+            <label class="block mb-1">Адрес проживания</label>
             <input
               v-model="form.address"
               type="text"
@@ -52,7 +52,7 @@
 
           <!-- password input box -->
           <div class="mb-[1.2em] sm:w-[50%] mx-auto">
-            <label for="password" class="block mb-1">Пароль:</label>
+            <label class="block mb-1">Пароль:</label>
             <input
               v-model="form.password"
               type="password"
@@ -64,9 +64,7 @@
 
           <!-- password confirm box -->
           <div class="mb-[1.2em] sm:w-[50%] mx-auto">
-            <label for="password_confirmation" class="block mb-1"
-              >Пароль:</label
-            >
+            <label class="block mb-1">Пароль:</label>
             <input
               v-model="form.password_confirmation"
               type="password"
@@ -81,10 +79,10 @@
 
           <!-- checkboxes  -->
           <div class="checkboxes flex justify-center mb-4 text-[0.8em]">
-            <label for="rememberMe" class="mr-[4em]">
+            <label class="mr-[4em]">
               <input class="mr-2 align-[-2px]" type="checkbox" />Запомнить
             </label>
-            <label for="showOnline">
+            <label>
               <input class="mr-2 align-[-2px]" type="checkbox" />Показывать в
               сети
             </label>

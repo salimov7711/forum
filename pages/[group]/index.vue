@@ -2,13 +2,16 @@
   <div>
     <div class="p-[20px]">
       <CategoryList :data="data" />
+      
     </div>
   </div>
+	
 </template>
 
 <script setup>
 const { group } = useRoute().params;
 const { data } = await useApiFetch(`/api/${group}`);
+const auth = useAuthStore();
 console.log(data);
 </script>
 

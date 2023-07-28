@@ -29,9 +29,14 @@
     "@fortawesome/vue-fontawesome": "^3.0.3",
     "@nuxt/image-edge": "^1.0.0-rc.1-28135297.08462d1",
     "@pinia/nuxt": "^0.4.11",
+    "class-variance-authority": "^0.7.0",
     "click-outside-vue3": "^4.0.1",
     "laravel-vue-pagination": "^4.1.0",
+    "notivue": "^1.0.5",
     "pinia": "^2.1.4",
-    "vue-final-modal": "^4.4.4"
+    "pusher-js": "^8.2.0",
+    "vue-final-modal": "^4.4.4",
+    "vue-text-highlight": "^2.0.10",
+    "vue-word-highlighter": "^1.2.3"
   }
 }

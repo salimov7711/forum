@@ -32,7 +32,7 @@
               <input type="password" placeholder="Password" />
             </div>
 
-            <label for="autologin " class="text-[.9em]">
+            <label  class="text-[.9em]">
               <input type="checkbox" class="align-middle mr-2" />
               Remember me
             </label>

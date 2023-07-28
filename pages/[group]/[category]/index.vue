@@ -20,6 +20,17 @@
 
     <div class="action-bar-top flex justify-between">
       <NuxtLink to="/newTopic"><MyButton>Создать тему</MyButton></NuxtLink>
+      <CustomPagination
+        :data="data.topics"
+        :item-classes="[
+          'bg-blue',
+          'text-white',
+          'border-blue',
+          'hover:bg-[#396293]',
+        ]"
+        :active-classes="['bg-[#3c3c3c]', 'text-white', 'border-[#3c3c3c]']"
+        @get-results="getResults"
+      />
     </div>
   </div>
 

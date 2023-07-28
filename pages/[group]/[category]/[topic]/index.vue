@@ -13,7 +13,7 @@
           Тема: {{ data.topic.title }}
         </h2>
       </div>
-      <PostList :posts="data.posts" />
+      <PostList :posts="data.posts" @refresh="refresh" />
     </div>
     <div class="subhead flex justify-between">
       <MyButton @click="open">Ответить в теме</MyButton>
@@ -24,11 +24,23 @@
 <script setup>
 const route = useRoute().params;
 
-const { data, pending, error } = await useApiFetch(
-  `/api/topic/${route.topic}`,
+const { data, pending, error, refresh } = await useApiFetch(
+  `/api/category/${route.topic}`,
   {}
 );
 
+// const fetchPosts = async () => {
+//   await useApiFetch(`/api/category/${route.topic}`, { server: false }).then(
+//     (r) => {
+//       data.value = r.data.value;
+//     }
+//   );
+//   console.log(data.value);
+// };
+
+onMounted(async () => {
+  // fetchPosts();
+});
 import { useModal } from "vue-final-modal";
 import ModalCreatePost from "@/components/ModalCreatePost";
 
@@ -37,6 +49,7 @@ const { open, close } = useModal({
   attrs: {
     onConfirm() {
       close();
+      refresh();
     },
 
     title: "Ответить в теме!",
@@ -46,7 +59,6 @@ const { open, close } = useModal({
     default: "<p>UseModal: The content of the modal</p>",
   },
 });
-console.log(data);
 </script>
 
 <style lang="scss" scoped></style>
